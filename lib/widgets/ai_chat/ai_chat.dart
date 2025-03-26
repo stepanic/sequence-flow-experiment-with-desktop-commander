@@ -45,7 +45,7 @@ class _AIChatState extends State<AIChat> {
     List<Question> allQuestions = SampleData.getQuestions();
     
     // Set the first question as current
-    _currentQuestion = allQuestions.first;
+    _currentQuestion = allQuestions.isNotEmpty ? allQuestions.first : null;
     
     // Add a welcome message from the AI
     _messages = [
@@ -54,17 +54,21 @@ class _AIChatState extends State<AIChat> {
         sender: MessageSender.AI,
         content: 'Welcome to the HTN Planning System! I\'ll help you model your '
             'planning problem. Let\'s start with a simple question: '
-            '${_currentQuestion?.text}',
+            '${_currentQuestion?.text ?? "What is your planning problem about?"}',
         questionId: _currentQuestion?.id,
       )
     ];
     
     // Setup remaining questions
-    _remainingQuestions = allQuestions.skip(1).toList();
+    _remainingQuestions = allQuestions.length > 1 
+        ? allQuestions.sublist(1) 
+        : [];
   }
 
   /// Handles a new message from the user.
   void _handleMessageSent(String content) {
+    if (content.trim().isEmpty) return;
+    
     setState(() {
       // Add user message
       _messages.add(

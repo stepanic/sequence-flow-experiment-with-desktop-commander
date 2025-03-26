@@ -52,7 +52,7 @@ class _TaskListState extends State<TaskList> {
     _tasks = SampleData.getTasks();
     _childrenMap = SampleData.getChildrenMap();
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return Column(

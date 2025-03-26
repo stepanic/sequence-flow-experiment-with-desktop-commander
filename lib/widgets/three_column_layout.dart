@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/entities/index.dart';
+import '../models/state/ui_state_manager.dart';
 import 'ai_chat/ai_chat.dart';
 import 'directed_graph/directed_graph.dart';
 import 'task_list/task_list.dart';
@@ -11,20 +11,18 @@ import 'task_list/task_list.dart';
 ///
 /// This design allows simultaneous viewing of different aspects of the planning process.
 class ThreeColumnLayout extends StatelessWidget {
-  /// Current UI state.
-  final UIState uiState;
-
-  /// Callback for when the UI state changes.
-  final Function(UIState) onUiStateChanged;
+  /// The UI state manager that controls the application state.
+  final UIStateManager uiStateManager;
 
   const ThreeColumnLayout({
     Key? key,
-    required this.uiState,
-    required this.onUiStateChanged,
+    required this.uiStateManager,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final uiState = uiStateManager.state;
+    
     return Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -48,42 +46,13 @@ class ThreeColumnLayout extends StatelessWidget {
           child: DirectedGraph(
             uiState: uiState,
             onNodeSelect: (nodeId) {
-              final newState = UIState(
-                conversationId: uiState.conversationId,
-                currentView: uiState.currentView,
-                expandedNodeIds: uiState.expandedNodeIds,
-                selectedTaskId: nodeId,
-                visibleGraphArea: uiState.visibleGraphArea,
-              );
-              onUiStateChanged(newState);
+              uiStateManager.selectTask(nodeId);
             },
             onNodeExpand: (nodeId) {
-              final updatedExpandedIds = List<String>.from(uiState.expandedNodeIds);
-              if (!updatedExpandedIds.contains(nodeId)) {
-                updatedExpandedIds.add(nodeId);
-              }
-              
-              final newState = UIState(
-                conversationId: uiState.conversationId,
-                currentView: uiState.currentView,
-                expandedNodeIds: updatedExpandedIds,
-                selectedTaskId: uiState.selectedTaskId,
-                visibleGraphArea: uiState.visibleGraphArea,
-              );
-              onUiStateChanged(newState);
+              uiStateManager.expandNode(nodeId);
             },
             onNodeCompress: (nodeId) {
-              final updatedExpandedIds = List<String>.from(uiState.expandedNodeIds);
-              updatedExpandedIds.remove(nodeId);
-              
-              final newState = UIState(
-                conversationId: uiState.conversationId,
-                currentView: uiState.currentView,
-                expandedNodeIds: updatedExpandedIds,
-                selectedTaskId: uiState.selectedTaskId,
-                visibleGraphArea: uiState.visibleGraphArea,
-              );
-              onUiStateChanged(newState);
+              uiStateManager.collapseNode(nodeId);
             },
           ),
         ),
@@ -97,42 +66,13 @@ class ThreeColumnLayout extends StatelessWidget {
           child: TaskList(
             uiState: uiState,
             onTaskSelect: (taskId) {
-              final newState = UIState(
-                conversationId: uiState.conversationId,
-                currentView: uiState.currentView,
-                expandedNodeIds: uiState.expandedNodeIds,
-                selectedTaskId: taskId,
-                visibleGraphArea: uiState.visibleGraphArea,
-              );
-              onUiStateChanged(newState);
+              uiStateManager.selectTask(taskId);
             },
             onTaskExpand: (nodeId) {
-              final updatedExpandedIds = List<String>.from(uiState.expandedNodeIds);
-              if (!updatedExpandedIds.contains(nodeId)) {
-                updatedExpandedIds.add(nodeId);
-              }
-              
-              final newState = UIState(
-                conversationId: uiState.conversationId,
-                currentView: uiState.currentView,
-                expandedNodeIds: updatedExpandedIds,
-                selectedTaskId: uiState.selectedTaskId,
-                visibleGraphArea: uiState.visibleGraphArea,
-              );
-              onUiStateChanged(newState);
+              uiStateManager.expandNode(nodeId);
             },
             onTaskCompress: (nodeId) {
-              final updatedExpandedIds = List<String>.from(uiState.expandedNodeIds);
-              updatedExpandedIds.remove(nodeId);
-              
-              final newState = UIState(
-                conversationId: uiState.conversationId,
-                currentView: uiState.currentView,
-                expandedNodeIds: updatedExpandedIds,
-                selectedTaskId: uiState.selectedTaskId,
-                visibleGraphArea: uiState.visibleGraphArea,
-              );
-              onUiStateChanged(newState);
+              uiStateManager.collapseNode(nodeId);
             },
           ),
         ),

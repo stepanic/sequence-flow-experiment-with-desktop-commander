@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../widgets/three_column_layout.dart';
-import '../models/entities/index.dart';
+import '../models/state/ui_state_manager.dart';
 
 /// Main screen of the HTN Planning application.
 ///
@@ -21,10 +21,6 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Access the UI state from the provider
-    final uiStateNotifier = Provider.of<ValueNotifier<UIState>>(context);
-    final uiState = uiStateNotifier.value;
-    
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sequence Flow - HTN Planning System'),
@@ -41,11 +37,11 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ],
       ),
-      body: ThreeColumnLayout(
-        uiState: uiState,
-        onUiStateChanged: (newState) {
-          // Update the UI state when it changes
-          uiStateNotifier.value = newState;
+      body: Consumer<UIStateManager>(
+        builder: (context, uiStateManager, _) {
+          return ThreeColumnLayout(
+            uiStateManager: uiStateManager,
+          );
         },
       ),
     );

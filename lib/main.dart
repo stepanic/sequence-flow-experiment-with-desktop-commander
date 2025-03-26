@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'models/entities/index.dart';
+import 'models/state/ui_state_manager.dart';
 import 'screens/main_screen.dart';
 import 'services/index.dart';
 
@@ -28,10 +29,10 @@ class SequenceFlowApp extends StatelessWidget {
           create: (_) => PersistenceService(),
         ),
         
-        // Provide UI state
-        ChangeNotifierProvider<ValueNotifier<UIState>>(
-          create: (_) => ValueNotifier<UIState>(
-            UIState(
+        // Provide UI state manager
+        ChangeNotifierProvider<UIStateManager>(
+          create: (_) => UIStateManager(
+            initialState: UIState(
               conversationId: 'default',
               currentView: 'all',
             ),

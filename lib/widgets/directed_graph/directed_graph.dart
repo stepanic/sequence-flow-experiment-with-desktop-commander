@@ -79,24 +79,23 @@ class _DirectedGraphState extends State<DirectedGraph> {
     widget.onNodeCompress(nodeId);
   }
 
-  /// Handles panning gesture.
-  void _handlePanUpdate(DragUpdateDetails details) {
-    setState(() {
-      _offset += details.delta / _scale;
-    });
-  }
-
-  /// Handles zoom gesture.
+  /// Handles scale gesture (combines panning and scaling).
   void _handleScaleUpdate(ScaleUpdateDetails details) {
     setState(() {
-      _scale = (_scale * details.scale).clamp(0.5, 2.0);
+      // Handle panning (translation)
+      _offset += details.focalPointDelta / _scale;
+      
+      // Handle scaling
+      if (details.scale != 1.0) {
+        _scale = (_scale * details.scale).clamp(0.5, 2.0);
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onPanUpdate: _handlePanUpdate,
+      // Use only scale gesture recognizer, which is a superset of pan
       onScaleUpdate: _handleScaleUpdate,
       child: Container(
         color: Colors.grey[100],
